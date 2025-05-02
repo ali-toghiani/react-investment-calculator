@@ -2,22 +2,32 @@ import { useState } from 'react';
 import Header from './Header.jsx';
 import Result from './Result.jsx';
 import UserInput from './UserInput.jsx';
-import {calculateInvestmentResults} from './util/investment.js';
-
-let data = [];
 
 function App() {
-  const [results, setResults] = useState([])
+  const [inputValue, inputChange] = useState({
+    initialInvestment: 10000,
+    annualInvestment: 1200,
+    expectedReturn: 6,
+    duration: 12,
+  });
+  const inputIsValid = inputValue.duration >= 1;
 
-  function calculateResults(inputData){
-    const temp = calculateInvestmentResults(inputData);
-    setResults(temp);
+  function setUserInput(id, value){
+    console.log(inputValue, id, value)
+    inputChange( prevVal => (
+      {
+        ...prevVal,
+        [id]: +value
+      }
+    ))
   }
   return (
     <>
       <Header />
-      <UserInput onUnserInputChange={val => calculateResults(val)}/>
-      <Result annualData={[...results]}/>
+      <UserInput userInput={inputValue} onUnserInputChange={setUserInput}/>
+      {
+        inputIsValid ? <Result userInput={inputValue}/> : undefined
+      }
     </>
   )
 }
